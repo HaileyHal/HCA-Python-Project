@@ -9,6 +9,6 @@ My solution was to research how many employees are typcially needed in the event
 
 Within this repo you will find:
 - the HCA employee file (with coordinates added)
-- all the peices of my main code (mapping, json conversion, and analytics)
+- all the pieces of my main code (mapping, json conversion, and analytics)
 - the final product (FINALPROJECT.py)
 - all of the other random files I used to clean and put things together
