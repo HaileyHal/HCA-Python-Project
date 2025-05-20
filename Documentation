@@ -1,0 +1,24 @@
+(Did not record documentation for feb/march. Still learning :) )
+
+4/16- So close with this code. Still running into “best_flights” key error. Tabpy runs fine, but my actual code isn’t working. Still need to add flight paths to the map with new airport lat and long.( new issue with this is that my paths come from the API that does not have lat and long. Not sure how to put into tableau now)
+
+4/21
+Add lat and long to json file that I made with the API
+Prices.json to a pandas df
+At lat and long to hca data
+Add the airport location to HCA through mapping technique
+Figure out how the heck to do that
+Set the circumference to 50 miles
+Good work on the project today. I was able to add latitude and longitude to my data, including writing a program that will add lat and long to whatever I call through the API that day. 
+
+4/22- did lots of work to the mapping file. It gave me lots of grief. I finished by testing my first function and saved it to a CSV and found that it worked! I now need to be able to group it by hospital name/zip so I can find out how many I can take. I think I’m close!
+
+
+4/23- THere are some data quality issues with the HCA dataset. There are a handful of employees where the location description (hospital name) does not match the zip code, city, or state. I am seeing florida hospitals with a UT state code. Interesting stuff. Maybe I’ll filter by zip instead.
+
+I can map and count total emps for each zip within the radius. My mapping program runs really slow because it sorts through each row in my HCA every time. 
+
+FINISHED!! I still am running a limited number of origin airports to not run out of API calls. Once my project is graded I might run the whole thing for fun. We’ll see. 
+
+4/24- met with Brinley to show the final product. Next steps: investigate how to make the front end (for interaction purposes). Count of managers needed (ratio of emps to managers?). Filtering by employee type. Return flight prices?
+Create presentation for august to present to ASC (either with front end or demo code)
