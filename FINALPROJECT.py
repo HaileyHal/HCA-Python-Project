@@ -111,9 +111,7 @@ newdf.to_csv(f"flightpricesfor{today}latlong.csv", index=False) # saving csv
 
 
 # mapping and while loop to print final results
-from geopy import distance 
-
-# newdf = pd.read_csv(f"flightpricesfor{today}latlong.csv") # can also probably delete once merged
+from geopy import distance
 
 prices_sorted = newdf.sort_values(["destination", "price"], ascending=[True,True]) # prints all origins and the destination sorted by price
 # cheapest_prices = prices_sorted.groupby("destination").first().reset_index() # only prints out one origin and destination --- might need to delete
