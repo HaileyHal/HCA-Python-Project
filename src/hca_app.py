@@ -18,8 +18,10 @@ from geopy import distance
 # =============================================================================
 # Reading in file of HCA Employees
 hca = pd.read_csv('CoordHCA.csv')
+
 load_dotenv()
 api_key = os.getenv('API_KEY')
+
 departure_airports = ['SLC', 'LAX', 'DFW', 'HOU'] # USE THIS FOR TESTING
 # departure_airports = ['ANC', 'SJC', 'OXR', 'SFO', 'OAK', 'LAX', 'ONT', 'PSP', 'LAS', 'BOI',
 #                       'IDA', 'SLC', 'DEN', 'ELP', 'ITC', 'MCI', 'DAL', 'DFW', 'AUS', 'GRK',
