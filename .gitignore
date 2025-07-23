@@ -1,0 +1,6 @@
+# ignoring my api key in my environment
+.env
+
+# ignoring random pcache stuff
+__pycache__
+__pycache__\tkinter.cpython-313.pyc

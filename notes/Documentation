@@ -22,3 +22,11 @@ FINISHED!! I still am running a limited number of origin airports to not run out
 
 4/24- met with Brinley to show the final product. Next steps: investigate how to make the front end (for interaction purposes). Count of managers needed (ratio of emps to managers?). Filtering by employee type. Return flight prices?
 Create presentation for august to present to ASC (either with front end or demo code)
+
+
+7/22-
+Started converting program to tkinter. I am abandoning streamlit because I don't want to deal with hosting issues. 
+Worked on converting to pythonic structure.
+
+7/23-
+Reorganizing repo.

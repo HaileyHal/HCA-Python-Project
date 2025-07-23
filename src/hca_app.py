@@ -1,4 +1,7 @@
 
+import os
+from dotenv import load_dotenv
+
 import tkinter as tk
 from customtkinter import CTk, CTkButton, CTkLabel, CTkEntry, CTkComboBox
 
@@ -15,7 +18,8 @@ from geopy import distance
 # =============================================================================
 # Reading in file of HCA Employees
 hca = pd.read_csv('CoordHCA.csv')
-api_key = 'a202ac4bd0b994e0eaaeed61cf95d6e60627ffcc91a233904027d467ee56c8b4'
+load_dotenv()
+api_key = os.getenv('API_KEY')
 departure_airports = ['SLC', 'LAX', 'DFW', 'HOU'] # USE THIS FOR TESTING
 # departure_airports = ['ANC', 'SJC', 'OXR', 'SFO', 'OAK', 'LAX', 'ONT', 'PSP', 'LAS', 'BOI',
 #                       'IDA', 'SLC', 'DEN', 'ELP', 'ITC', 'MCI', 'DAL', 'DFW', 'AUS', 'GRK',
