@@ -30,3 +30,20 @@ Worked on converting to pythonic structure.
 
 7/23-
 Reorganizing repo.
+
+8/30-
+
+to do 
+- alphabetize airports list
+- last test: tried from DFW, only got a flight from boston, didn't add any other airports. got multiple API errors in terminal saying "API error for OXR: Google Flights hasn't returned any results for this query.
+API error for ITC: Google Flights hasn't returned any results for this query.
+API error for DAL: Google Flights hasn't returned any results for this query.
+API error for DFW: Google Flights hasn't returned any results for this query.
+API error for PIB: Google Flights hasn't returned any results for this query.
+API error for PFN: Google Flights hasn't returned any results for this query.
+API error for PIE: Google Flights hasn't returned any results for this query.
+API error for VLD: Google Flights hasn't returned any results for this query.
+API error for MCN: Google Flights hasn't returned any results for this query.
+API error for LYH: Google Flights hasn't returned any results for this query.
+
+look to see if there aren't flights for these and where the other real but missing flights are

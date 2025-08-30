@@ -20,16 +20,16 @@ from geopy import distance
 hca = pd.read_csv('CoordHCA.csv')
 
 load_dotenv()
-api_key = os.getenv('API_KEY')
+api_key = 'bb9b3869f0b6710931ab34d0668b1b41710f304038eadc4083472e9483ee6e08'   # os.getenv('API_KEY')
 
-departure_airports = ['SLC', 'LAX', 'DFW', 'HOU'] # USE THIS FOR TESTING
-# departure_airports = ['ANC', 'SJC', 'OXR', 'SFO', 'OAK', 'LAX', 'ONT', 'PSP', 'LAS', 'BOI',
-#                       'IDA', 'SLC', 'DEN', 'ELP', 'ITC', 'MCI', 'DAL', 'DFW', 'AUS', 'GRK',
-#                       'CRP', 'IAH', 'HOU', 'AEX', 'MSY', 'PIB', 'PNS', 'VPS', 'PFN', 'TLH',
-#                       'PIE', 'TPA', 'SRQ', 'GNV', 'JAX', 'DAB', 'MLB', 'MCO', 'RSW', 'PBI',
-#                       'FLL', 'MIA', 'ATL', 'AGS', 'SAV', 'BQK', 'VLD', 'MCN', 'CHS', 'CHA',
-#                       'BNA', 'GSO', 'RDU', 'TRI', 'TYS', 'CLT', 'ROA', 'LYH', 'LWB', 'RIC',
-#                       'PHF', 'CHO', 'DCA', 'IAD', 'BWI', 'LEX', 'IND', 'CMI', 'MHT', 'BOS']
+# departure_airports = ['SLC', 'LAX', 'DFW', 'HOU'] # USE THIS FOR TESTING
+departure_airports = ['ANC', 'SJC', 'OXR', 'SFO', 'OAK', 'LAX', 'ONT', 'PSP', 'LAS', 'BOI',
+                      'IDA', 'SLC', 'DEN', 'ELP', 'ITC', 'MCI', 'DAL', 'DFW', 'AUS', 'GRK',
+                      'CRP', 'IAH', 'HOU', 'AEX', 'MSY', 'PIB', 'PNS', 'VPS', 'PFN', 'TLH',
+                      'PIE', 'TPA', 'SRQ', 'GNV', 'JAX', 'DAB', 'MLB', 'MCO', 'RSW', 'PBI',
+                      'FLL', 'MIA', 'ATL', 'AGS', 'SAV', 'BQK', 'VLD', 'MCN', 'CHS', 'CHA',
+                      'BNA', 'GSO', 'RDU', 'TRI', 'TYS', 'CLT', 'ROA', 'LYH', 'LWB', 'RIC',
+                      'PHF', 'CHO', 'DCA', 'IAD', 'BWI', 'LEX', 'IND', 'CMI', 'MHT', 'BOS']
 
 today = date.today()  # Updates for daily flight price information
 
@@ -58,6 +58,7 @@ def submit():
     elif hurricane_level == 5:
         needed_emps *= 0.5
     needed_emps = int(round(needed_emps, 0))
+    needed_emps_var = needed_emps
     emp_count_label.configure(text=f'You will need {needed_emps} employees brought in.')
     airport_code_label.configure(text='What is the destination airport code?')
     submit_button.grid_forget()
@@ -104,7 +105,7 @@ def find_employees():
                 price = flight.get('price')
                 if price:
                     all_prices[origin].append(price)
-                    with open('prices.json', 'a') as f:
+                    with open('prices.json', 'w') as f:
                         json.dump({'origin': origin, 'destination': airport_code,
                                    'price': price}, f)
                         f.write('\n')
@@ -132,6 +133,9 @@ def cleaning_prices():
     '''
     airports_df = pd.read_csv('airports.csv')
 
+    # with open('prices.json', 'w') as json_file:
+    #     json.dump(prices_df, json_file)
+
     prices_df = pd.read_json('prices.json', lines=True)  # Reading the json to df
 
     # Adding origin/destination lat and long to df file and renaming for clarity
@@ -153,6 +157,7 @@ def cleaning_prices():
     filename = f'flight prices for {today}.csv'
     newdf.to_csv(filename, index=False)
     # DELETE prices.json HERE to avoid duplication
+    find_airports(filename)
 
 def find_airports(filename):
     '''
@@ -160,6 +165,7 @@ def find_airports(filename):
     at the hospitals with the cheapest correlating flight.
     '''
     newdf = pd.read_csv(filename)
+    needed_emps = needed_emps_var.get()
     prices_sorted_df = newdf.sort_values(['destination', 'price'], ascending=[True,True])
 
     def within_radius(origin_lat, origin_long, radius_miles=50):
@@ -187,22 +193,29 @@ def find_airports(filename):
     
             if needed_emps > total_available_emps:
                 total_airport_price = total_available_emps * row['price']
-                print(f'You need {total_available_emps} employees from the {row['origin']} \
-                      airport. This will cost ${total_airport_price}.')
+                airport_emps_message = f'You need {total_available_emps} employees from the \
+                    {row["origin"]} airport. This will cost ${total_airport_price}.'
+                airport_emps_label.configure(text=airport_emps_message)
                 needed_emps = needed_emps - total_available_emps
             elif needed_emps < total_available_emps:
                 total_available_emps = needed_emps  # Avoiding pulling extra employees
                 total_airport_price = total_available_emps * row['price']
-                print(f'You need {total_available_emps} employees from the {row['origin']} \
-                      airport. This will cost ${total_airport_price}.')
+                airport_emps_message = airport_emps_message + '\n' + f'You need \
+                                       {total_available_emps} employees from the {row["origin"]} \
+                                        airport. This will cost ${total_airport_price}.'
+                airport_emps_label.configure(text=airport_emps_message)
                 needed_emps = needed_emps - total_available_emps # updating neededEmps
             
-            response = input('Would you like to see which hospitals these employees are \
-                             coming from? (Y/N): ')
+            response_label.configure(text='Would you like to see which hospitals these employees \
+                                     are coming from? (Y/N): ')
+            response_input.grid()
+            response = response_var.get()
+            emp_count_by_hos = radius_hos.groupby('facility_zip')['Emp34Id'].nunique()
             if response == 'Y':
-                print(f'These are the hospitals within 50 miles of the {row['origin']} airport, \
-                      and how many employees work at each one:')
-                print(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
+                response_message = f'These are the hospitals within 50 miles of the \
+                                   {row["origin"]} airport, and how many employees work at each:\
+                                    \n {emp_count_by_hos}'
+                response_label.configure(text=response_message)
 
             if response == 'N':
                 pass
@@ -218,8 +231,10 @@ root = CTk()
 root.geometry('800x700')
 root.title("Healthcare Hurricane Portal") #titling window
 destination_zip_var=tk.StringVar()
+needed_emps_var=tk.IntVar()
 hurricane_level_var=tk.IntVar()
 airport_code_var=tk.StringVar()
+response_var=tk.StringVar()
 
 # =============================================================================
 # TKINTER WIDGETS
@@ -241,6 +256,11 @@ airport_code_dropdown.grid_forget()
 
 find_employees_button = CTkButton(root, text='Find Employees', command=find_employees,
                                   corner_radius=32)
+
+airport_emps_label = CTkLabel(root, text='', font=('Arial',20))
+response_label = CTkLabel(root, text='', font=('Arial',20))
+response_input = CTkEntry(root, textvariable=response_var, font=('Arial',20), text_color='#04033A')
+response_label = CTkLabel(root, text='', font=('Arial',20))
 total_price_label = CTkLabel(root, text='', font=('Arial',20))
 
 # =============================================================================
@@ -253,6 +273,8 @@ hurricane_dropdown.grid()
 submit_button.grid()
 emp_count_label.grid()
 airport_code_label.grid()
+airport_emps_label.grid()
+response_label.grid()
 total_price_label.grid()
 
 root.mainloop()
