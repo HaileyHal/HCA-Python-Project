@@ -30,7 +30,7 @@ for origin in departure_airports: # looping through each origin/departure airpor
         data = response.json() # creating a dictionary from web request
 
         if data.get("error"): # Skip if API returned an error
-            print(f"API error for {origin}: {data['error']}")
+            print(f"Error for {origin}: {data['error']}")
             continue
 
         flights = data.get("other_flights", []) # finding other flights in data - grabbing the right subset
@@ -65,6 +65,6 @@ for origin in departure_airports: # looping through each origin/departure airpor
         print(f"Error message: {e}") # printing the error message. I think it runs each time, for whatever reason. I leave it up so I can see when I run out of API calls 
 
     
-with open("prices2.json", "a") as f: # Write each price to a JSON file
+with open("prices2.json", "w") as f: # Write each price to a JSON file
     json.dump({"origin": origin, "destination": destination, "price": price}, f)
     f.write("\n")  # Newline-delimited JSON entries
