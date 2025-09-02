@@ -22,14 +22,15 @@ hca = pd.read_csv('CoordHCA.csv')
 load_dotenv()
 api_key = 'bb9b3869f0b6710931ab34d0668b1b41710f304038eadc4083472e9483ee6e08'   # os.getenv('API_KEY')
 
-departure_airports = ['SLC', 'LAX', 'DFW', 'HOU', 'BOS'] # USE THIS FOR TESTING
-# departure_airports = ['ANC', 'SJC', 'OXR', 'SFO', 'OAK', 'LAX', 'ONT', 'PSP', 'LAS', 'BOI',
-#                       'IDA', 'SLC', 'DEN', 'ELP', 'ITC', 'MCI', 'DAL', 'DFW', 'AUS', 'GRK',
-#                       'CRP', 'IAH', 'HOU', 'AEX', 'MSY', 'PIB', 'PNS', 'VPS', 'PFN', 'TLH',
-#                       'PIE', 'TPA', 'SRQ', 'GNV', 'JAX', 'DAB', 'MLB', 'MCO', 'RSW', 'PBI',
-#                       'FLL', 'MIA', 'ATL', 'AGS', 'SAV', 'BQK', 'VLD', 'MCN', 'CHS', 'CHA',
-#                       'BNA', 'GSO', 'RDU', 'TRI', 'TYS', 'CLT', 'ROA', 'LYH', 'LWB', 'RIC',
-#                       'PHF', 'CHO', 'DCA', 'IAD', 'BWI', 'LEX', 'IND', 'CMI', 'MHT', 'BOS']
+# departure_airports = ['SLC', 'LAX', 'DFW', 'HOU', 'BOS'] # USE THIS FOR TESTING
+departure_airports = ['AEX', 'AGS', 'ANC', 'ATL', 'AUS', 'BOI', 'BOS', 'BQK', 'BNA', 'BWI',
+                      'CHA', 'CHS', 'CHO', 'CLT', 'CMI', 'CRP', 'DAB', 'DAL', 'DCA', 'DEN',
+                      'DFW', 'ELP', 'FLL', 'GNV', 'GRK', 'HOU', 'IAD', 'IAH', 'IDA', 'IND', 
+                      'ITC', 'JAX', 'LAS', 'LAX', 'LEX', 'LWB', 'LYH', 'MCI', 'MCN', 'MCO',
+                      'MHT', 'MIA', 'MLB', 'MSY', 'OAK', 'ONT', 'OXR', 'PBI', 'PFN', 'PHF',
+                      'PIB', 'PIE', 'PNS', 'PSP', 'RDU', 'RIC', 'ROA', 'RSW', 'SAV', 'SFO',
+                      'SJC', 'SLC', 'SRQ', 'TLH', 'TPA', 'TRI', 'TYS', 'VLD', 'VPS']
+
 
 today = date.today()  # Updates for daily flight price information
 
@@ -38,7 +39,9 @@ def submit():
     '''
     This method will calculate the number of needed employess, and then display that on the GUI.
     '''
-    emp_count = hca.groupby("facility_zip")["Emp34Id"].nunique()  # Grouping by hospital and counting emp ID
+    with open('prices.json', 'w') as f:
+        f.write('')
+    emp_count = hca.groupby('facility_zip')['Emp34Id'].nunique()  # Grouping by hospital and counting emp ID
     
     destination_zip = destination_zip_var.get()
     destination_zip = int(destination_zip)
@@ -89,14 +92,14 @@ def find_employees():
         }
 
 
-        response = requests.get("https://serpapi.com/search", params=params)  # API request
+        response = requests.get('https://serpapi.com/search', params=params)  # API request
         data = response.json()  # Convert response to dict
 
-        if data.get("error"):        # Skip if API returned an error
-            print(f"Error for {origin}: {data['error']}")
+        if data.get('error'):        # Skip if API returned an error
+            print(f'Error for {origin}: {data["error"]}')
             continue
 
-        flights = data.get("other_flights", [])        # Get flights
+        flights = data.get('other_flights', [])        # Get flights
         if not flights:
             continue            # No flights found, skip this origin
 
@@ -104,7 +107,7 @@ def find_employees():
 
 
         for flight in flights:        # Collect valid prices
-            price = flight.get("price")
+            price = flight.get('price')
             if price is not None:
                 all_prices[origin].append(price)
 
@@ -113,17 +116,17 @@ def find_employees():
             avg_price = round(sum(all_prices[origin]) / len(all_prices[origin]), 2)
 
             # Save to JSON
-            with open("prices.json", "a") as f:
-                json.dump({"origin": origin, "destination": airport_code, "price": avg_price}, f)
-                f.write("\n")
+            with open('prices.json', 'a') as f:  # MUST be 'a', or else only the last airport is saved
+                json.dump({'origin': origin, 'destination': airport_code, 'price': avg_price}, f)
+                f.write('\n')
 
             # Replace list with the average price
             all_prices[origin] = avg_price
-            print(f"Great job! The average price for {origin} to {airport_code} on {today} is {avg_price}")
+            print(f'Great job! The average price for {origin} to {airport_code} on {today} is {avg_price}')
         else:
             # No valid prices found
             del all_prices[origin]
-            print(f"No valid prices for {origin} to {airport_code}")
+            print(f'No valid prices for {origin} to {airport_code}')
 
     cleaning_prices()
 
@@ -189,23 +192,14 @@ def find_airports(filename):
             radius_emps = sum(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
             total_available_emps = radius_emps * 0.1
             total_available_emps = round(total_available_emps, 0)
-            print(f'There are {total_available_emps} employees available from {row["origin"]}.')
+            airport_emps_label.configure(text=f'There are {total_available_emps} employees available from {row["origin"]}.')
     
             if needed_emps > total_available_emps:
                 total_airport_price = total_available_emps * row['price']
-                # airport_emps_message = f'You need {total_available_emps} employees from the \
-                #     {row["origin"]} airport. This will cost ${total_airport_price}.'
-                # airport_emps_label.configure(text=airport_emps_message)
                 needed_emps = needed_emps - total_available_emps
             elif needed_emps < total_available_emps:
                 total_available_emps = needed_emps  # Avoiding pulling extra employees
                 total_airport_price = total_available_emps * row['price']
-                # airport_emps_message = f'You need {total_available_emps} employees from the \
-                #     {row["origin"]} airport. This will cost ${total_airport_price}.'
-                # airport_emps_message = airport_emps_message + '\n' + f'You need \
-                #                        {total_available_emps} employees from the {row["origin"]} \
-                #                         airport. This will cost ${total_airport_price}.'
-                # airport_emps_label.configure(text=airport_emps_message)
                 needed_emps = needed_emps - total_available_emps # updating neededEmps
             
             # response_label.configure(text='Would you like to see which hospitals these employees \
