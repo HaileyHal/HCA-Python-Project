@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 import tkinter as tk
-from customtkinter import CTk, CTkButton, CTkLabel, CTkEntry, CTkComboBox
+from customtkinter import CTk, CTkButton, CTkLabel, CTkEntry, CTkComboBox, CTkTextbox
 
 from datetime import date
 
@@ -41,7 +41,7 @@ def submit():
     '''
     with open('prices.json', 'w') as f:
         f.write('')
-    emp_count = hca.groupby('facility_zip')['Emp34Id'].nunique()  # Grouping by hospital and counting emp ID
+    emp_count = hca.groupby('facility_zip')['Emp34Id'].nunique()  # Counting emp ID by hospital
     
     destination_zip = destination_zip_var.get()
     destination_zip = int(destination_zip)
@@ -116,13 +116,14 @@ def find_employees():
             avg_price = round(sum(all_prices[origin]) / len(all_prices[origin]), 2)
 
             # Save to JSON
-            with open('prices.json', 'a') as f:  # MUST be 'a', or else only the last airport is saved
+            with open('prices.json', 'a') as f:  # MUST be 'a', or only the last airport is saved
                 json.dump({'origin': origin, 'destination': airport_code, 'price': avg_price}, f)
                 f.write('\n')
 
             # Replace list with the average price
             all_prices[origin] = avg_price
-            print(f'Great job! The average price for {origin} to {airport_code} on {today} is {avg_price}')
+            print(f'Great job! The average price for {origin} to '
+                  f'{airport_code} on {today} is {avg_price}')
         else:
             # No valid prices found
             del all_prices[origin]
@@ -186,35 +187,53 @@ def find_airports(filename):
     final_price = 0  # Price for all employees through all airports
 
     for index, row in prices_sorted_df.iterrows():  # Sorting through cheaper origin airports
-        while needed_emps > 0:
-            # Sum of all employees that are within the 50 mile radius of the airport
-            radius_hos = within_radius(row['origin_lat'], row['origin_long'])
-            radius_emps = sum(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
-            total_available_emps = radius_emps * 0.1
-            total_available_emps = round(total_available_emps, 0)
-            airport_emps_label.configure(text=f'There are {total_available_emps} employees available from {row["origin"]}.')
-    
-            if needed_emps > total_available_emps:
-                total_airport_price = total_available_emps * row['price']
-                needed_emps = needed_emps - total_available_emps
-            elif needed_emps < total_available_emps:
-                total_available_emps = needed_emps  # Avoiding pulling extra employees
-                total_airport_price = total_available_emps * row['price']
-                needed_emps = needed_emps - total_available_emps # updating neededEmps
-            
-            # response_label.configure(text='Would you like to see which hospitals these employees \
-            #                          are coming from? (Y/N): ')
-            # response_input.grid()
-            # response = response_var.get()
-            # emp_count_by_hos = radius_hos.groupby('facility_zip')['Emp34Id'].nunique()
-            # if response == 'Y':
-            #     response_message = f'These are the hospitals within 50 miles of the \
-            #                        {row["origin"]} airport, and how many employees work at each:\
-            #                         \n {emp_count_by_hos}'
-            #     response_label.configure(text=response_message)
+        # Sum of all employees that are within the 50 mile radius of the airport
+        radius_hos = within_radius(row['origin_lat'], row['origin_long'])
+        radius_emps = sum(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
+        total_available_emps = radius_emps * 0.1
+        total_available_emps = round(total_available_emps, 0)
+        
+        airport_emps_label.grid()
+        airport_emps_message = (f'There are {total_available_emps} employees '
+                                        f'available from {row["origin"]} \n.') 
+        airport_emps_label.insert("end", airport_emps_message)
+        airport_emps_label.see("end")  # Auto-scroll
 
-            # if response == 'N':
-            #     pass
+        if needed_emps > total_available_emps:
+            total_airport_price = total_available_emps * row['price']
+            needed_emps = needed_emps - total_available_emps
+        elif needed_emps < total_available_emps:
+            total_available_emps = needed_emps  # Avoiding pulling extra employees
+            total_airport_price = total_available_emps * row['price']
+            needed_emps = needed_emps - total_available_emps # updating neededEmps
+    
+        # while needed_emps > 0:
+        #     # Sum of all employees that are within the 50 mile radius of the airport
+        #     radius_hos = within_radius(row['origin_lat'], row['origin_long'])
+        #     radius_emps = sum(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
+        #     total_available_emps = radius_emps * 0.1
+        #     total_available_emps = round(total_available_emps, 0)
+        #     airport_emps_label.grid()
+        #     airport_emps_message = (f'There are {total_available_emps} employees '
+        #                                  f'available from {row["origin"]} \n.') 
+        #     airport_emps_label.insert("end", airport_emps_message)
+        #     airport_emps_label.see("end")  # Auto-scroll
+    
+        #     if needed_emps > total_available_emps:
+        #         total_airport_price = total_available_emps * row['price']
+        #         needed_emps = needed_emps - total_available_emps
+        #     elif needed_emps < total_available_emps:
+        #         total_available_emps = needed_emps  # Avoiding pulling extra employees
+        #         total_airport_price = total_available_emps * row['price']
+        #         needed_emps = needed_emps - total_available_emps # updating neededEmps
+            
+
+            emp_count_by_hos = radius_hos.groupby('EmpLocationDesc')['Emp34Id'].nunique()
+
+            response_message = f'These are the hospitals within 50 miles of the \
+                               {row["origin"]} airport, and how many employees work at each:\
+                                \n {emp_count_by_hos}'
+            response_label.configure(text=response_message)
 
             final_price += total_airport_price # adding each origin airport price to the total
     total_price_label.configure(text=f'Your total cost is ${final_price}.')
@@ -236,7 +255,8 @@ response_var=tk.StringVar()
 # TKINTER WIDGETS
 # =============================================================================
 zip_label = CTkLabel(root, text='Hospital Zipcode:', font=('Arial',20), text_color='#04033A')
-zip_entry = CTkEntry(root, textvariable=destination_zip_var, font=('Arial',20), text_color='#04033A')
+zip_entry = CTkEntry(root, textvariable=destination_zip_var, font=('Arial',20),
+                     text_color='#04033A')
 hurricane_label = CTkLabel(root, text='Select Incoming Hurricane Level:', font=('Arial',20),
                            text_color='#04033A')
 hurricane_dropdown = CTkComboBox(root, variable=hurricane_level_var, values=['1','2','3','4','5'],
@@ -253,7 +273,7 @@ airport_code_dropdown.grid_forget()
 find_employees_button = CTkButton(root, text='Find Employees', command=find_employees,
                                   corner_radius=32)
 
-airport_emps_label = CTkLabel(root, text='', font=('Arial',20))
+airport_emps_label = CTkTextbox(root, height=200, width=400, font=('Arial',20))
 response_label = CTkLabel(root, text='', font=('Arial',20))
 response_input = CTkEntry(root, textvariable=response_var, font=('Arial',20), text_color='#04033A')
 response_label = CTkLabel(root, text='', font=('Arial',20))
@@ -269,7 +289,6 @@ hurricane_dropdown.grid()
 submit_button.grid()
 emp_count_label.grid()
 airport_code_label.grid()
-airport_emps_label.grid()
 response_label.grid()
 total_price_label.grid()
 

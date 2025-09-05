@@ -41,9 +41,12 @@ Alphabetized the airports list, added code to clear JSON file
 
 to do 
 - fix api key
-- alphabetize airports list
-- clear json file at the end of the program
 - review pythonic: line length, etc
+- see if there is a way I can make it run faster. Figure out what is running the slowest with 'printed' timers? use time package
+- fix message for instances when the nearest airport doesn't have enough employees
+- add list of hospital names/zips to pull from that have available emps- don't ask for option, just provide a simple list.
 
+9/3
+Worked on fixing message relating how many employees to pull from which airports. 
 
 78229- HOU (no san antonio or austin)
