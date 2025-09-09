@@ -33,6 +33,7 @@ departure_airports = ['AEX', 'AGS', 'ANC', 'ATL', 'AUS', 'BOI', 'BOS', 'BQK', 'B
 
 
 today = date.today()  # Updates for daily flight price information
+emp_count = hca.groupby('facility_zip')['Emp34Id'].nunique()  # Counting emp ID by hospital
 
 
 def submit():
@@ -41,7 +42,6 @@ def submit():
     '''
     with open('prices.json', 'w') as f:
         f.write('')
-    emp_count = hca.groupby('facility_zip')['Emp34Id'].nunique()  # Counting emp ID by hospital
     
     destination_zip = destination_zip_var.get()
     destination_zip = int(destination_zip)
@@ -206,27 +206,6 @@ def find_airports(filename):
             total_available_emps = needed_emps  # Avoiding pulling extra employees
             total_airport_price = total_available_emps * row['price']
             needed_emps = needed_emps - total_available_emps # updating neededEmps
-    
-        # while needed_emps > 0:
-        #     # Sum of all employees that are within the 50 mile radius of the airport
-        #     radius_hos = within_radius(row['origin_lat'], row['origin_long'])
-        #     radius_emps = sum(radius_hos.groupby('facility_zip')['Emp34Id'].nunique())
-        #     total_available_emps = radius_emps * 0.1
-        #     total_available_emps = round(total_available_emps, 0)
-        #     airport_emps_label.grid()
-        #     airport_emps_message = (f'There are {total_available_emps} employees '
-        #                                  f'available from {row["origin"]} \n.') 
-        #     airport_emps_label.insert("end", airport_emps_message)
-        #     airport_emps_label.see("end")  # Auto-scroll
-    
-        #     if needed_emps > total_available_emps:
-        #         total_airport_price = total_available_emps * row['price']
-        #         needed_emps = needed_emps - total_available_emps
-        #     elif needed_emps < total_available_emps:
-        #         total_available_emps = needed_emps  # Avoiding pulling extra employees
-        #         total_airport_price = total_available_emps * row['price']
-        #         needed_emps = needed_emps - total_available_emps # updating neededEmps
-            
 
             emp_count_by_hos = radius_hos.groupby('EmpLocationDesc')['Emp34Id'].nunique()
 
@@ -274,8 +253,7 @@ find_employees_button = CTkButton(root, text='Find Employees', command=find_empl
                                   corner_radius=32)
 
 airport_emps_label = CTkTextbox(root, height=200, width=400, font=('Arial',20))
-response_label = CTkLabel(root, text='', font=('Arial',20))
-response_input = CTkEntry(root, textvariable=response_var, font=('Arial',20), text_color='#04033A')
+response_label = CTkTextbox(root, height=200, width=400, font=('Arial',20))
 response_label = CTkLabel(root, text='', font=('Arial',20))
 total_price_label = CTkLabel(root, text='', font=('Arial',20))
 

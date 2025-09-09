@@ -36,8 +36,14 @@ Continued work on TKinter
 
 9/2
 Spent many hours today debugging everything. Apparetnyl I struggle with try/except blocks. I got rid of a bunch and let my terminal tell me the errors instead, and it seemed to work better. I got it to run! still fine tuning the features and messages, but it works again.
-
 Alphabetized the airports list, added code to clear JSON file
+
+9/3
+Worked on fixing message relating how many employees to pull from which airports. 
+
+9/9
+Started asking Claude for help optimizing and making it all run faster- currently the loop and the API are making things run really slow.
+
 
 to do 
 - fix api key
@@ -45,8 +51,5 @@ to do
 - see if there is a way I can make it run faster. Figure out what is running the slowest with 'printed' timers? use time package
 - fix message for instances when the nearest airport doesn't have enough employees
 - add list of hospital names/zips to pull from that have available emps- don't ask for option, just provide a simple list.
-
-9/3
-Worked on fixing message relating how many employees to pull from which airports. 
 
 78229- HOU (no san antonio or austin)
