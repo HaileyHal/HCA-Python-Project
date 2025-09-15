@@ -11,6 +11,7 @@ from customtkinter import CTk, CTkButton, CTkLabel, CTkEntry, CTkComboBox
 from customtkinter import CTkTextbox, CTkProgressBar
 
 from dotenv import load_dotenv
+import os
 
 import pandas as pd
 import requests
@@ -25,7 +26,7 @@ hca = pd.read_csv('CoordHCA.csv')
 airports_df = pd.read_csv('airports.csv')
 
 load_dotenv()
-api_key = 'bb9b3869f0b6710931ab34d0668b1b41710f304038eadc4083472e9483ee6e08'
+api_key = os.getenv('API_KEY')
 
 departure_airports = ['AEX', 'AGS', 'ANC', 'ATL', 'AUS', 'BOI', 'BOS', 'BQK', 'BNA', 'BWI',
                       'CHA', 'CHS', 'CHO', 'CLT', 'CMI', 'CRP', 'DAB', 'DAL', 'DCA', 'DEN',
