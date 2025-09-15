@@ -7,8 +7,4 @@ https://communities.aisnet.org/aisstudentchapters/eventshome/competitions/2025co
 
 My solution was to research how many employees are typcially needed in the event of a disaster, how many are available, and how travel/transfer costs. The goal is that a manager at an affected hospital will be able to input their hospital facility and the level of an incoming hurricane, and be able to know how many employees they need and where they will come from (optimized with the cheapest flight prices).
 
-Within this repo you will find:
-- the HCA employee file (with coordinates added)
-- all the pieces of my main code (mapping, json conversion, and analytics)
-- the final product (FINALPROJECT.py)
-- all of the other random files I used to clean and put things together
+The final project is found in the src/ file, under ai_app.py. Everything else is a part or a version of the final product. 
