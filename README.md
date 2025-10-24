@@ -10,6 +10,11 @@ My solution was to research how many employees are typcially needed in the event
 The final project is found in the src/ file, under ai_app.py. Everything else is a part or a version of the final product. 
 
 Running:
+
+
 <img width="807" height="812" alt="Screenshot 2025-10-24 133824" src="https://github.com/user-attachments/assets/48782e87-e876-4dda-a40e-12b242332ed4" />
+
 Final image:
+
+
 <img width="741" height="818" alt="Screenshot 2025-10-24 134305" src="https://github.com/user-attachments/assets/35db2245-fd09-44bf-af71-a1e4c5e2ba4d" />
